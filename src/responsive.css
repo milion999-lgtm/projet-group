@@ -82,3 +82,11 @@
     backdrop-filter:none!important;
   }
 }
+
+/* Static mobile decorative orb: avoid repeated repaint trails on Android. */
+@media(max-width:820px),(hover:none) and (pointer:coarse){
+  .app-shell main .stats-orb{
+    animation:none!important;
+    translate:none!important;
+  }
+}
