@@ -33,7 +33,16 @@ function loadYouTubeApi() {
 function CoursePreview({ videoId, title, price, pointsCost, canUnlock, onUnlock }: { videoId: string; title: string; price: number; pointsCost?: number; canUnlock: boolean; onUnlock: () => void }) {
   const mountRef = useRef<HTMLDivElement>(null)
   const [locked, setLocked] = useState(false)
+  const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 820px), (hover: none) and (pointer: coarse)').matches)
   useEffect(() => {
+    const query = window.matchMedia('(max-width: 820px), (hover: none) and (pointer: coarse)')
+    const update = () => setMobile(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+  useEffect(() => {
+    if (mobile) return
     let player: YouTubePlayer | undefined
     let interval = 0
     let cancelled = false
@@ -54,8 +63,8 @@ function CoursePreview({ videoId, title, price, pointsCost, canUnlock, onUnlock 
       })
     }).catch(() => setLocked(true))
     return () => { cancelled = true; window.clearInterval(interval); player?.destroy() }
-  }, [videoId])
-  return <div className="course-preview-video"><div className="course-preview-player" ref={mountRef}/>{locked&&<div className="preview-paywall" role="dialog" aria-label="Fin de l’aperçu"><span className="preview-lock-icon">🔒</span><span className="eyebrow">APERÇU TERMINÉ · 2 MIN</span><h3>Payez pour continuer le cours</h3><p>Débloquez toutes les leçons de « {title} » {canUnlock&&pointsCost?`avec ${pointsCost} points`: `pour ${price} MAD` }.</p><button className="button" onClick={onUnlock}>{canUnlock&&pointsCost?`Débloquer · ${pointsCost} points`:`Continuer · ${price} MAD`} <ArrowRight size={15}/></button><small>{canUnlock?'Vos points sont utilisés sans paiement.':'Le paiement est simulé : aucun débit réel.'}</small></div>}</div>
+  }, [videoId, mobile])
+  return <div className="course-preview-video">{mobile ? <a className="mobile-video-fallback" href={`https://www.youtube.com/watch?v=${videoId}`} target="_blank" rel="noreferrer" aria-label={`Regarder l’aperçu de ${title} sur YouTube`}><img src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`} alt="" loading="lazy"/><span className="mobile-video-shade"/><span className="mobile-video-play"><Play size={20} fill="currentColor"/></span><span className="mobile-video-copy"><strong>Lire l’aperçu sur YouTube</strong><small>Ouverture de la vidéo dans YouTube pour une lecture plus stable sur téléphone.</small></span></a> : <div className="course-preview-player" ref={mountRef} />}{locked&&<div className="preview-paywall" role="dialog" aria-label="Fin de l’aperçu"><span className="preview-lock-icon">🔒</span><span className="eyebrow">APERÇU TERMINÉ · 2 MIN</span><h3>Payez pour continuer le cours</h3><p>Débloquez toutes les leçons de « {title} » {canUnlock&&pointsCost?`avec ${pointsCost} points`: `pour ${price} MAD` }.</p><button className="button" onClick={onUnlock}>{canUnlock&&pointsCost?`Débloquer · ${pointsCost} points`:`Continuer · ${price} MAD`} <ArrowRight size={15}/></button><small>{canUnlock?'Vos points sont utilisés sans paiement.':'Le paiement est simulé : aucun débit réel.'}</small></div>}</div>
 }
 
 export default function CourseDetails() {
@@ -106,3 +115,4 @@ export default function CourseDetails() {
   {checkout&&<div className="modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setCheckout(false)}}><section className="course-modal test-checkout" role="dialog" aria-modal="true" aria-labelledby="test-checkout-title"><button className="icon-button modal-close" onClick={()=>setCheckout(false)} aria-label="Fermer"><X size={18}/></button><span className="eyebrow">MODE TEST · SANS PAIEMENT</span><h2 id="test-checkout-title">Tester l’accès à la formation</h2><p><strong>{course.title}</strong></p><div className="test-price-summary"><span>Prix fictif de test</span><strong>{course.priceMAD} MAD</strong></div><p className="test-payment-note">Cette action simule l’achat et active l’accès localement sur cet appareil. Aucun moyen de paiement n’est demandé et aucune somme n’est débitée. Ce n’est pas un vrai achat.</p><div className="modal-actions"><button className="button button-outline" onClick={()=>setCheckout(false)}>Annuler</button><button className="button" onClick={confirmTestPurchase}>Simuler l’achat <ArrowRight size={15}/></button></div></section></div>}
   </div>
 }
+
