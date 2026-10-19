@@ -102,3 +102,10 @@
     scroll-behavior:auto!important;
   }
 }
+
+/* Domain cards: remove blurred paint layers on mobile GPUs. */
+@media(max-width:820px),(hover:none) and (pointer:coarse){
+  .app-shell main .category-card::after{content:none!important;display:none!important}
+  .app-shell main .category-card,
+  .app-shell main .category-card:hover{transform:none!important;transition:none!important}
+}
