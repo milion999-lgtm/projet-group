@@ -90,3 +90,15 @@
     translate:none!important;
   }
 }
+
+/* Disable composited motion on touch screens to prevent Android paint trails. */
+@media(max-width:820px),(hover:none) and (pointer:coarse){
+  .app-shell main,
+  .app-shell main *,
+  .app-shell main *::before,
+  .app-shell main *::after{
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+}
