@@ -34,7 +34,7 @@ function Header({ user, onSignOut, theme, onToggleTheme }: { user: string | null
   return <header className="site-header"><div className="header-inner">
     <Link to="/" className="brand"><span className="brand-symbol"><span/></span><span>eduverse<span className="brand-dot">.</span></span></Link>
     <nav className={`main-nav ${menu ? 'nav-open' : ''}`} aria-label="Navigation principale">
-      <NavLink to="/courses">Formations</NavLink><NavLink to="/assistant">Assistant IA</NavLink><a href="/#categories">Domaines</a><a href="/#about">À propos</a><NavLink to="/dashboard">Mon espace</NavLink>
+      <NavLink to="/courses">Formations</NavLink><NavLink to="/assistant">Assistant IA</NavLink><Link to="/#categories">Domaines</Link><Link to="/#about">À propos</Link><NavLink to="/dashboard">Mon espace</NavLink>
     </nav>
     <div className="header-actions"><button className="icon-button theme-toggle" aria-label="Changer de thème" onClick={onToggleTheme}>{theme === 'dark' ? <Sun size={17}/> : <Moon size={17}/>}</button>
       {user ? <><Link to="/dashboard" className="user-pill"><span className="avatar">{user.slice(0,1).toUpperCase()}</span><span>{user.split('@')[0]}</span><ChevronDown size={14}/></Link><button className="icon-button signout" onClick={onSignOut} aria-label="Se déconnecter"><LogOut size={17}/></button></> : <><Link to="/login" className="login-link">Connexion</Link><Link to="/signup" className="button button-small">Créer un compte <ArrowRight size={15}/></Link></>}
@@ -110,7 +110,7 @@ export default function App() {
       if (!supabase) return { error: 'Le service de compte n’est pas configuré. Ajoutez les identifiants Supabase dans .env.local.' }
       const cleanEmail = email.trim().toLowerCase()
       const result = mode === 'signup'
-        ? await supabase.auth.signUp({ email: cleanEmail, password, options: { data: { display_name: name.trim() }, emailRedirectTo: `${window.location.origin}/login` } })
+        ? await supabase.auth.signUp({ email: cleanEmail, password, options: { data: { display_name: name.trim() }, emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}login` } })
         : await supabase.auth.signInWithPassword({ email: cleanEmail, password })
       if (result.error) return { error: authMessage(result.error) }
       if (mode === 'signup' && !result.data.session) return { error: '', confirmationRequired: true }
@@ -119,7 +119,7 @@ export default function App() {
     signInOAuth: async (provider) => {
       if (!supabase) return 'Le service de compte n’est pas configuré. Ajoutez les identifiants Supabase dans .env.local.'
       const next = safeNext(new URLSearchParams(location.search).get('next'))
-      const redirectTo = `${window.location.origin}/login?next=${encodeURIComponent(next)}`
+      const redirectTo = `${window.location.origin}${import.meta.env.BASE_URL}login?next=${encodeURIComponent(next)}`
       const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } })
       return error ? authMessage(error) : ''
     },
