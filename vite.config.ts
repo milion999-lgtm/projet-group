@@ -68,6 +68,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
   base: process.env.GITHUB_ACTIONS === 'true' ? '/projet-group/' : '/',
+  server: { host: '0.0.0.0' },
+  preview: { host: '0.0.0.0' },
   plugins: [react(), courseTutorApi(env.OPENAI_API_KEY, env.OPENAI_MODEL || 'gpt-4o-mini')],
   build: {
     rollupOptions: {
