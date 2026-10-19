@@ -67,7 +67,7 @@ function courseTutorApi(apiKey: string, model: string): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
-  base: '/projet-group/',
+  base: process.env.GITHUB_ACTIONS === 'true' ? '/projet-group/' : '/',
   plugins: [react(), courseTutorApi(env.OPENAI_API_KEY, env.OPENAI_MODEL || 'gpt-4o-mini')],
   build: {
     rollupOptions: {
