@@ -34,7 +34,7 @@ function Header({ user, onSignOut, theme, onToggleTheme }: { user: string | null
   return <header className="site-header"><div className="header-inner">
     <Link to="/" className="brand"><span className="brand-symbol"><span/></span><span>eduverse<span className="brand-dot">.</span></span></Link>
     <nav className={`main-nav ${menu ? 'nav-open' : ''}`} aria-label="Navigation principale">
-      <NavLink to="/courses">Formations</NavLink><NavLink to="/assistant">Assistant IA</NavLink><Link to="/#categories">Domaines</Link><Link to="/#about">À propos</Link><NavLink to="/dashboard">Mon espace</NavLink>
+      <NavLink to="/courses">Formations</NavLink><NavLink to="/assistant">Assistant IA</NavLink><Link to="/#categories" onClick={() => setMenu(false)}>Domaines</Link><Link to="/#about" onClick={() => setMenu(false)}>À propos</Link><NavLink to="/dashboard">Mon espace</NavLink>
     </nav>
     <div className="header-actions"><button className="icon-button theme-toggle" aria-label="Changer de thème" onClick={onToggleTheme}>{theme === 'dark' ? <Sun size={17}/> : <Moon size={17}/>}</button>
       {user ? <><Link to="/dashboard" className="user-pill"><span className="avatar">{user.slice(0,1).toUpperCase()}</span><span>{user.split('@')[0]}</span><ChevronDown size={14}/></Link><button className="icon-button signout" onClick={onSignOut} aria-label="Se déconnecter"><LogOut size={17}/></button></> : <><Link to="/login" className="login-link">Connexion</Link><Link to="/signup" className="button button-small">Créer un compte <ArrowRight size={15}/></Link></>}
@@ -61,6 +61,27 @@ export default function App() {
   const [assessment, setAssessment] = useState<SkillAssessmentResult | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
+
+  useEffect(() => {
+    if (!location.hash) return
+    const targetId = decodeURIComponent(location.hash.slice(1))
+    let frame = 0
+    let attempts = 0
+    let cancelled = false
+    const scrollToHash = () => {
+      if (cancelled) return
+      const target = document.getElementById(targetId)
+      if (target) {
+        const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 0
+        const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 12
+        window.scrollTo({ top, behavior: 'smooth' })
+        return
+      }
+      if (attempts++ < 120) frame = window.requestAnimationFrame(scrollToHash)
+    }
+    frame = window.requestAnimationFrame(scrollToHash)
+    return () => { cancelled = true; window.cancelAnimationFrame(frame) }
+  }, [location.pathname, location.hash])
 
   useEffect(() => {
     localStorage.removeItem('ev-user')
