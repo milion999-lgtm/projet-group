@@ -96,7 +96,7 @@ export default function App() {
       const id = session?.user.id ?? null
       setUserId(id)
       const metadata = session?.user.user_metadata
-      setUser(session ? session.user.email ?? session.user.phone ?? metadata?.full_name ?? metadata?.name ?? metadata?.user_name ?? id : null)
+      setUser(session ? metadata?.display_name ?? metadata?.full_name ?? metadata?.name ?? metadata?.user_name ?? session.user.email ?? session.user.phone ?? id : null)
       setAssessment(assessmentFor(id))
       setAuthReady(true)
     }
