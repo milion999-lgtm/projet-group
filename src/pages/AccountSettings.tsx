@@ -118,7 +118,7 @@ export default function AccountSettings() {
           <label htmlFor="account-password-confirm">Confirmer le mot de passe<input id="account-password-confirm" name="confirm-password" type="password" autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} placeholder="Répétez le nouveau mot de passe"/></label>
           <button className="button button-outline" type="submit" disabled={savingPassword || savingProfile}><KeyRound size={15}/>{savingPassword ? 'Modification…' : 'Modifier le mot de passe'}</button>
           <div className="account-security-note"><Mail size={15}/><span>Si vous vous connectez avec Google ou GitHub, votre mot de passe reste géré par ce fournisseur.</span></div>
-        </form>
+        </form> : <section className="account-panel account-form" aria-labelledby="account-provider-security"><div className="account-panel-heading"><span className="account-panel-icon"><KeyRound size={18}/></span><div><h2 id="account-provider-security">Sécurité</h2><p>Votre compte utilise un fournisseur de connexion externe.</p></div></div><div className="account-security-note"><Mail size={15}/><span>Le mot de passe et les moyens de connexion Google ou GitHub sont gérés dans les paramètres de ce fournisseur.</span></div></section>}
       </div>
     </>}
     {error && <div className="account-message account-error" role="alert">{error}</div>}
