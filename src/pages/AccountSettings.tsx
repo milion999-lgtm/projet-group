@@ -123,6 +123,7 @@ export default function AccountSettings() {
       if (updateError) { setError('Le mot de passe n’a pas pu être modifié. Vérifiez qu’il respecte les règles du compte.'); return }
       setPassword('')
       setConfirmPassword('')
+      if (profile?.email) setIdentities(old => old.includes('email') ? old : [...old, 'email'])
       setNotice('Votre mot de passe EduVerse a été modifié.')
     } catch {
       setError('Le mot de passe n’a pas pu être modifié. Vérifiez votre connexion et réessayez.')
@@ -242,6 +243,10 @@ export default function AccountSettings() {
           <section className="account-section" aria-labelledby="account-providers-heading">
             <div className="account-section-heading"><span className="account-section-icon"><Link2 size={17}/></span><div><h2 id="account-providers-heading">Méthodes de connexion</h2><p>Reliez Google et GitHub au même compte EduVerse.</p></div></div>
             <div className="account-provider-list">
+              <div className="account-provider-row">
+                <div className="account-provider-name"><span className="account-provider-logo account-logo-email"><Mail size={18}/></span><div><strong>E-mail</strong><small>{identities.includes('email') ? 'Adresse et mot de passe activés' : profile?.email ? 'Ajoutez un mot de passe pour vous connecter par e-mail' : 'Ajoutez puis confirmez votre adresse e-mail'}</small></div></div>
+                {identities.includes('email') ? <span className="account-provider-linked"><Check size={13}/> Relié</span> : <a className="button button-outline account-provider-action" href={profile?.email ? '#account-password' : '#account-email'}>{profile?.email ? 'Créer un mot de passe' : 'Ajouter un e-mail'}</a>}
+              </div>
               {oauthProviders.map(provider => {
                 const connected = identities.includes(provider.id)
                 return <div className="account-provider-row" key={provider.id}>
