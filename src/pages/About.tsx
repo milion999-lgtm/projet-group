@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpenCheck, ExternalLink, Play, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import '../about.css'
 
 const principles = [
   {
