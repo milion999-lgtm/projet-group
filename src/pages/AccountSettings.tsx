@@ -18,6 +18,7 @@ export default function AccountSettings() {
   const [loading, setLoading] = useState(true)
   const [savingProfile, setSavingProfile] = useState(false)
   const [savingPassword, setSavingPassword] = useState(false)
+  const [canChangePassword, setCanChangePassword] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
@@ -33,6 +34,7 @@ export default function AccountSettings() {
         const current = authUser.email ?? ''
         const displayName = String(authUser.user_metadata?.display_name ?? authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? '')
         setProfile({ email: current, phone: authUser.phone ?? '', name: displayName, userId: authUser.id })
+        setCanChangePassword(Array.isArray(authUser.app_metadata?.providers) && authUser.app_metadata.providers.includes('email'))
         setName(displayName)
         setEmail(current)
         setCurrentEmail(current)
@@ -62,9 +64,9 @@ export default function AccountSettings() {
       if (emailChanged) updates.email = cleanEmail
       const { data, error: updateError } = await supabase.auth.updateUser(updates)
       if (updateError || !data.user) { setError('La modification n’a pas abouti. Vérifiez les informations et réessayez.'); return }
-      const nextEmail = data.user.email ?? cleanEmail
+      const nextEmail = data.user.email ?? currentEmail
       setCurrentEmail(nextEmail)
-      setEmail(nextEmail)
+      setEmail(emailChanged ? cleanEmail : nextEmail)
       setProfile({ ...profile, email: nextEmail, name: cleanName })
       setNotice(emailChanged
         ? 'Votre nom a été enregistré. Confirmez la nouvelle adresse depuis l’e-mail envoyé par Supabase avant qu’elle remplace l’adresse actuelle.'
@@ -110,7 +112,7 @@ export default function AccountSettings() {
           {profile?.phone && <label htmlFor="account-phone">Téléphone associé<input id="account-phone" value={profile.phone} readOnly/><small>Le changement de numéro nécessite une vérification SMS; contactez l’administrateur pour le moment.</small></label>}
           <button className="button" type="submit" disabled={savingProfile || savingPassword}><Save size={15}/>{savingProfile ? 'Enregistrement…' : 'Enregistrer le profil'}</button>
         </form>
-        <form className="account-panel account-form" onSubmit={savePassword}>
+        {canChangePassword ? <form className="account-panel account-form" onSubmit={savePassword}>
           <div className="account-panel-heading"><span className="account-panel-icon"><KeyRound size={18}/></span><div><h2>Sécurité</h2><p>Choisissez un mot de passe long, unique et difficile à deviner.</p></div></div>
           <label htmlFor="account-password">Nouveau mot de passe<input id="account-password" name="new-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={event => setPassword(event.target.value)} placeholder="8 caractères minimum"/></label>
           <label htmlFor="account-password-confirm">Confirmer le mot de passe<input id="account-password-confirm" name="confirm-password" type="password" autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} placeholder="Répétez le nouveau mot de passe"/></label>
