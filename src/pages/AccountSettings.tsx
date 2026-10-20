@@ -154,8 +154,9 @@ export default function AccountSettings() {
     try {
       const { data, error: verifyError } = await supabase.auth.verifyOtp({ phone: pendingPhone, token, type: 'phone_change' })
       if (verifyError || !data.user) { setError('Le code est incorrect ou expiré. Vérifiez-le et réessayez.'); return }
-      setProfile(old => old ? { ...old, phone: data.user.phone ?? pendingPhone } : old)
-      setPhone(data.user.phone ?? pendingPhone)
+      const confirmedPhone = data.user.phone ?? pendingPhone
+      setProfile(old => old ? { ...old, phone: confirmedPhone } : old)
+      setPhone(confirmedPhone)
       setPendingPhone('')
       setPhoneCode('')
       setNotice('Votre nouveau numéro a été confirmé et associé à votre compte.')
