@@ -1,16 +1,35 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { ArrowLeft, Check, Github, KeyRound, Mail, Save, UserRound } from 'lucide-react'
+import { ArrowLeft, Check, KeyRound, Link2, Mail, Save, UserRound } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../App'
 import { supabase } from '../lib/supabase'
 import './account.css'
 
-type Profile = { email: string; phone: string; name: string; userId: string }
+type Profile = { email: string; phone: string; name: string }
 type OAuthProvider = 'google' | 'github'
 const oauthProviders: { id: OAuthProvider; label: string }[] = [
   { id: 'google', label: 'Google' },
   { id: 'github', label: 'GitHub' },
 ]
+
+function GoogleLogo() {
+  return <svg className="account-brand-logo google-logo" aria-hidden="true" viewBox="0 0 48 48">
+    <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.8-3.5 6.1-8.7 6.1-15Z"/>
+    <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4 1.9-6.9 1.9-5.3 0-9.8-3.6-11.4-8.4H5.8v5.2A20 20 0 0 0 24 44Z"/>
+    <path fill="#FBBC05" d="M12.6 27.5a12 12 0 0 1 0-7v-5.2H5.8a20 20 0 0 0 0 17.4l6.8-5.2Z"/>
+    <path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3l5.8-5.8A19.4 19.4 0 0 0 24 4 20 20 0 0 0 5.8 15.3l6.8 5.2C14.2 15.6 18.7 12 24 12Z"/>
+  </svg>
+}
+
+function GitHubLogo() {
+  return <svg className="account-brand-logo github-logo" aria-hidden="true" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.24-1.62-1.24-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15.99 1.7 2.59 1.21 3.22.93.1-.72.39-1.21.7-1.49-2.48-.28-5.09-1.24-5.09-5.51 0-1.22.44-2.21 1.15-2.99-.12-.28-.5-1.42.11-2.95 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.67.11 2.95.72.78 1.15 1.77 1.15 2.99 0 4.28-2.61 5.22-5.1 5.5.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/>
+  </svg>
+}
+
+function ProviderLogo({ provider }: { provider: OAuthProvider }) {
+  return provider === 'google' ? <GoogleLogo/> : <GitHubLogo/>
+}
 
 export default function AccountSettings() {
   const { user } = useApp()
@@ -45,7 +64,7 @@ export default function AccountSettings() {
         const current = authUser.email ?? ''
         const displayName = String(authUser.user_metadata?.display_name ?? authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? '')
         const currentPhone = authUser.phone ?? ''
-        setProfile({ email: current, phone: currentPhone, name: displayName, userId: authUser.id })
+        setProfile({ email: current, phone: currentPhone, name: displayName })
         setName(displayName)
         setEmail(current)
         setCurrentEmail(current)
@@ -187,43 +206,56 @@ export default function AccountSettings() {
 
   return <div className="account-page page-width">
     <Link className="account-back" to="/dashboard"><ArrowLeft size={15}/> Retour à mon espace</Link>
-    <header className="account-heading"><span className="eyebrow">ESPACE PERSONNEL</span><h1>Mon compte</h1><p>Modifiez vos informations, votre mot de passe et vos moyens de connexion.</p></header>
-    {loading ? <div className="account-panel" role="status">Chargement de votre compte…</div> : <>
-      {profile && <div className="account-identity"><span className="account-avatar">{(profile.name || profile.email || profile.phone || user || 'E').slice(0,1).toUpperCase()}</span><div><strong>{profile.name || profile.email || profile.phone || 'Compte EduVerse'}</strong><small>Identifiant du compte · {profile.userId.slice(0,8)}…</small></div><span className="account-active"><Check size={13}/> Connecté</span></div>}
-      <div className="account-grid">
-        <form className="account-panel account-form" onSubmit={saveProfile}>
-          <div className="account-panel-heading"><span className="account-panel-icon"><UserRound size={18}/></span><div><h2>Profil</h2><p>Ces informations sont privées et associées à votre compte.</p></div></div>
-          <label htmlFor="account-name">Nom affiché<input id="account-name" name="name" autoComplete="name" maxLength={80} minLength={2} required value={name} onChange={event => setName(event.target.value)} placeholder="Votre nom"/></label>
-          <label htmlFor="account-email">Adresse e-mail<input id="account-email" name="email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} placeholder={profile?.phone ? 'Ajoutez un e-mail (facultatif)' : 'vous@exemple.fr'}/><small>Une nouvelle adresse doit être confirmée par e-mail avant de devenir active.</small></label>
-          <button className="button" type="submit" disabled={savingProfile || savingPassword || savingPhone || Boolean(linking)}><Save size={15}/>{savingProfile ? 'Enregistrement…' : 'Enregistrer le profil'}</button>
-        </form>
-        <form className="account-panel account-form" onSubmit={savePassword}>
-          <div className="account-panel-heading"><span className="account-panel-icon"><KeyRound size={18}/></span><div><h2>Sécurité</h2><p>Définissez un mot de passe EduVerse, même si vous utilisez Google ou GitHub.</p></div></div>
-          <label htmlFor="account-password">Nouveau mot de passe<input id="account-password" name="new-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={event => setPassword(event.target.value)} placeholder="8 caractères minimum"/></label>
-          <label htmlFor="account-password-confirm">Confirmer le mot de passe<input id="account-password-confirm" name="confirm-password" type="password" autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} placeholder="Répétez le nouveau mot de passe"/></label>
-          <button className="button button-outline" type="submit" disabled={savingPassword || savingProfile || savingPhone || Boolean(linking)}><KeyRound size={15}/>{savingPassword ? 'Modification…' : 'Modifier le mot de passe'}</button>
-          <div className="account-security-note"><Mail size={15}/><span>Ce mot de passe permet aussi une connexion e-mail lorsqu’une adresse vérifiée est liée à votre compte.</span></div>
-        </form>
-        <section className="account-panel account-form" aria-labelledby="account-phone-heading">
-          <div className="account-panel-heading"><span className="account-panel-icon"><Mail size={18}/></span><div><h2 id="account-phone-heading">Téléphone</h2><p>Ajoutez ou remplacez votre numéro après vérification par SMS.</p></div></div>
-          <form className="account-phone-form" onSubmit={pendingPhone ? confirmPhoneChange : requestPhoneChange}>
-            {!pendingPhone ? <label htmlFor="account-phone">Numéro international<input id="account-phone" name="tel" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={event => setPhone(event.target.value)} placeholder="+212 6 00 00 00 00" maxLength={24} required/><small>Utilisez l’indicatif du pays, par exemple +212 pour le Maroc.</small></label> : <><label htmlFor="account-phone-pending">Nouveau numéro<input id="account-phone-pending" value={pendingPhone} readOnly/></label><label htmlFor="account-phone-code">Code reçu par SMS<input id="account-phone-code" name="one-time-code" inputMode="numeric" autoComplete="one-time-code" value={phoneCode} onChange={event => setPhoneCode(event.target.value)} maxLength={8} required placeholder="Code de confirmation"/></label></>}
-            <button className="button button-outline" type="submit" disabled={savingPhone || savingProfile || savingPassword || Boolean(linking)}>{savingPhone ? 'Vérification…' : pendingPhone ? 'Confirmer le numéro' : 'Envoyer un code SMS'}</button>
-          </form>
-        </section>
-        <section className="account-panel account-form" aria-labelledby="account-providers-heading">
-          <div className="account-panel-heading"><span className="account-panel-icon"><Github size={18}/></span><div><h2 id="account-providers-heading">Connexion avec Google et GitHub</h2><p>Reliez les deux moyens à ce même compte EduVerse.</p></div></div>
-          <div className="account-provider-list">
-            {oauthProviders.map(provider => {
-              const connected = identities.includes(provider.id)
-              return <div className="account-provider-row" key={provider.id}><div><strong>{provider.label}</strong><small>{connected ? 'Relié à ce compte' : 'Pas encore relié'}</small></div>{connected ? <span className="account-provider-linked"><Check size={13}/> Relié</span> : <button className="button button-outline" type="button" onClick={() => void linkProvider(provider.id)} disabled={Boolean(linking) || savingProfile || savingPassword || savingPhone}>{linking === provider.id ? 'Redirection…' : `Relier ${provider.label}`}</button>}</div>
-            })}
-          </div>
-          <div className="account-security-note"><KeyRound size={15}/><span>Google/GitHub doivent être activés dans Supabase. Lier un fournisseur différent peut demander d’activer « Allow manual linking » dans Authentication → Settings.</span></div>
-        </section>
-      </div>
-    </>}
-    {error && <div className="account-message account-error" role="alert">{error}</div>}
-    {notice && <div className="account-message account-success" role="status">{notice}</div>}
+    <header className="account-heading"><span className="eyebrow">ESPACE PERSONNEL</span><h1>Gérer mon compte</h1><p>Modifiez les informations de votre compte EduVerse et choisissez comment vous connecter.</p></header>
+    <fieldset className="account-fieldset">
+      <legend>Paramètres personnels</legend>
+      {loading ? <div className="account-loading" role="status">Chargement de votre compte…</div> : <>
+        {profile && <div className="account-identity"><span className="account-avatar">{(profile.name || profile.email || profile.phone || user || 'E').slice(0,1).toUpperCase()}</span><div><strong>{profile.name || profile.email || profile.phone || 'Compte EduVerse'}</strong><small>Compte connecté</small></div><span className="account-active"><Check size={13}/> Actif</span></div>}
+        <div className="account-sections">
+          <section className="account-section" aria-labelledby="account-profile-heading">
+            <div className="account-section-heading"><span className="account-section-icon"><UserRound size={17}/></span><div><h2 id="account-profile-heading">Profil</h2><p>Votre nom affiché et votre adresse de contact.</p></div></div>
+            <form className="account-fields" onSubmit={saveProfile}>
+              <label htmlFor="account-name">Nom affiché<input id="account-name" name="name" autoComplete="name" maxLength={80} minLength={2} required value={name} onChange={event => setName(event.target.value)} placeholder="Votre nom"/></label>
+              <label htmlFor="account-email">Adresse e-mail<input id="account-email" name="email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="vous@exemple.fr"/><small>Une nouvelle adresse doit être confirmée par e-mail avant de devenir active.</small></label>
+              <button className="button" type="submit" disabled={savingProfile || savingPassword || savingPhone || Boolean(linking)}><Save size={15}/>{savingProfile ? 'Enregistrement…' : 'Enregistrer le profil'}</button>
+            </form>
+          </section>
+
+          <section className="account-section" aria-labelledby="account-security-heading">
+            <div className="account-section-heading"><span className="account-section-icon"><KeyRound size={17}/></span><div><h2 id="account-security-heading">Mot de passe</h2><p>Définissez ou modifiez votre mot de passe EduVerse.</p></div></div>
+            <form className="account-fields" onSubmit={savePassword}>
+              <label htmlFor="account-password">Nouveau mot de passe<input id="account-password" name="new-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={event => setPassword(event.target.value)} placeholder="8 caractères minimum"/></label>
+              <label htmlFor="account-password-confirm">Confirmer le mot de passe<input id="account-password-confirm" name="confirm-password" type="password" autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} placeholder="Répétez le nouveau mot de passe"/></label>
+              <button className="button button-outline" type="submit" disabled={savingPassword || savingProfile || savingPhone || Boolean(linking)}>{savingPassword ? 'Modification…' : 'Modifier le mot de passe'}</button>
+              <small className="account-help">Un mot de passe EduVerse peut être utilisé avec une adresse e-mail vérifiée, même si vous vous connectez aussi avec Google ou GitHub.</small>
+            </form>
+          </section>
+
+          <section className="account-section" aria-labelledby="account-phone-heading">
+            <div className="account-section-heading"><span className="account-section-icon"><Mail size={17}/></span><div><h2 id="account-phone-heading">Téléphone</h2><p>Ajoutez ou remplacez votre numéro après confirmation par SMS.</p></div></div>
+            <form className="account-fields" onSubmit={pendingPhone ? confirmPhoneChange : requestPhoneChange}>
+              {!pendingPhone ? <label htmlFor="account-phone">Numéro international<input id="account-phone" name="tel" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={event => setPhone(event.target.value)} placeholder="+212 6 00 00 00 00" maxLength={24} required/><small>Incluez l’indicatif du pays, par exemple +212 pour le Maroc.</small></label> : <><label htmlFor="account-phone-pending">Nouveau numéro<input id="account-phone-pending" value={pendingPhone} readOnly/></label><label htmlFor="account-phone-code">Code reçu par SMS<input id="account-phone-code" name="one-time-code" inputMode="numeric" autoComplete="one-time-code" value={phoneCode} onChange={event => setPhoneCode(event.target.value)} maxLength={8} required placeholder="Code de confirmation"/></label></>}
+              <button className="button button-outline" type="submit" disabled={savingPhone || savingProfile || savingPassword || Boolean(linking)}>{savingPhone ? 'Vérification…' : pendingPhone ? 'Confirmer le numéro' : 'Envoyer un code SMS'}</button>
+            </form>
+          </section>
+
+          <section className="account-section" aria-labelledby="account-providers-heading">
+            <div className="account-section-heading"><span className="account-section-icon"><Link2 size={17}/></span><div><h2 id="account-providers-heading">Méthodes de connexion</h2><p>Reliez Google et GitHub au même compte EduVerse.</p></div></div>
+            <div className="account-provider-list">
+              {oauthProviders.map(provider => {
+                const connected = identities.includes(provider.id)
+                return <div className="account-provider-row" key={provider.id}>
+                  <div className="account-provider-name"><span className={`account-provider-logo account-logo-${provider.id}`}><ProviderLogo provider={provider.id}/></span><div><strong>{provider.label}</strong><small>{connected ? 'Relié à ce compte' : 'Pas encore relié'}</small></div></div>
+                  {connected ? <span className="account-provider-linked"><Check size={13}/> Relié</span> : <button className="button button-outline" type="button" onClick={() => void linkProvider(provider.id)} disabled={Boolean(linking) || savingProfile || savingPassword || savingPhone}>{linking === provider.id ? 'Redirection…' : `Relier ${provider.label}`}</button>}
+                </div>
+              })}
+            </div>
+            <small className="account-help">Google et GitHub doivent être activés dans Supabase. Pour relier des fournisseurs à ce compte, « Allow manual linking » doit être autorisé dans Authentication → Settings.</small>
+          </section>
+        </div>
+      </>}
+      {error && <div className="account-message account-error" role="alert">{error}</div>}
+      {notice && <div className="account-message account-success" role="status">{notice}</div>}
+    </fieldset>
   </div>
 }
