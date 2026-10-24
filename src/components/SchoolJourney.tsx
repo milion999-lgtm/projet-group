@@ -81,7 +81,7 @@ export default function SchoolJourney() {
         {!reducedMotion && <video ref={outsideRef} className={`school-scene-video ${outsideReady ? 'is-ready' : ''}`} src={sceneActive ? campusVideo : undefined} muted loop playsInline preload="none" poster={campusPoster} aria-hidden="true" onCanPlay={(event) => markReady(event.currentTarget, setOutsideReady)} />}
       </motion.div>
       <motion.div className="school-scene-image school-scene-interior" style={{ opacity: insideOpacity, scale: insideScale, clipPath: insideReveal }}>
-        <img src={classroomPoster} srcSet={classroomPosterSet} sizes="100vw" alt="Des étudiants suivent un cours dans un amphithéâtre" loading="lazy" decoding="async" />
+        <img src={classroomPoster} srcSet={classroomPosterSet} sizes="100vw" alt="Des étudiants suivent un cours dans un amphithéâtre" loading="eager" fetchPriority="high" decoding="async" />
         {!reducedMotion && <video ref={insideRef} className={`school-scene-video ${insideReady ? 'is-ready' : ''}`} src={sceneActive && insideActive ? classroomVideo : undefined} muted loop playsInline preload="none" poster={classroomPoster} aria-hidden="true" onCanPlay={(event) => markReady(event.currentTarget, setInsideReady)} />}
       </motion.div>
       <div className="school-scene-shade" aria-hidden="true" />

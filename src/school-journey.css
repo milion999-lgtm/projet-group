@@ -1,6 +1,6 @@
 .school-journey{position:relative;height:230vh;background:#050713;color:#fff}
 .school-scene-sticky{position:sticky;top:0;isolation:isolate;height:100svh;min-height:520px;overflow:hidden;background:#080b18}
-.school-scene-image{position:absolute;inset:-2%;will-change:transform,opacity}
+.school-scene-image{position:absolute;inset:-2%;will-change:transform,opacity;background:#26382a}
 .school-scene-image img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 48%}
 .school-scene-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 850ms ease;pointer-events:none}.school-scene-video.is-ready{opacity:1}
 .school-scene-interior img{object-position:center 45%}
