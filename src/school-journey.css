@@ -18,11 +18,11 @@
 .school-scene-bottom{position:absolute;z-index:3;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr minmax(80px,220px) 1fr;align-items:center;gap:22px;padding:23px max(7vw,calc((100vw - 1160px)/2));color:rgba(236,243,255,.66)}
 .school-scene-credit{font-size:9px}.school-scene-credit a{text-decoration:underline;text-underline-offset:3px}.school-scene-credit a:hover{color:#fff}.school-scene-progress{height:2px;overflow:hidden;background:rgba(255,255,255,.26)}.school-scene-progress span{display:block;height:100%;transform-origin:left;background:linear-gradient(90deg,#75dfff,#bd8cff)}
 .school-scene-scroll{display:flex;align-items:center;justify-self:end;gap:8px;font:9px var(--mono,monospace);letter-spacing:.12em}
-@media(max-width:680px){
+@media(max-width:680px),(hover:none) and (pointer:coarse){
   /* Android WebView/Chrome can leave paint trails when a long sticky video is transformed while scrolling. */
   .school-journey{height:auto;min-height:0;overflow:hidden;background:#18231d}
   .school-scene-sticky{position:relative;top:auto;display:flow-root;height:auto;min-height:0;overflow:hidden;background:#18231d}
-  .school-scene-image{position:relative;inset:auto;width:100%;height:94svh;min-height:520px;opacity:1!important;transform:none!important;clip-path:none!important;will-change:auto;background:#26382a}
+  .school-scene-image{position:relative;inset:auto;width:100%;height:max(94svh,520px);min-height:0;opacity:1!important;transform:none!important;clip-path:none!important;will-change:auto;background:#26382a}
   .school-scene-image img{object-position:58% center;transform:scale(1.08);transition:transform 1.4s cubic-bezier(.2,.7,.2,1)!important}
   .school-scene-image.scene-in-view img{transform:scale(1)}
   .school-scene-video{opacity:1!important;object-position:58% center;transition:none!important}
@@ -30,7 +30,7 @@
   .school-scene-image:after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(16,27,19,.76),rgba(18,30,21,.2)),linear-gradient(0deg,rgba(13,22,16,.72),transparent 58%)}
   .school-scene-shade,.school-scene-grain{display:none}
   .school-scene-copy{left:24px;top:43svh;width:calc(100% - 48px);opacity:1!important;transform:translateY(-50%);will-change:auto}
-  .school-copy-inside{top:137svh}
+  .school-copy-inside{top:calc(max(94svh,520px) + 43svh)}
   .school-scene-copy h1,.school-scene-copy h2{font-size:clamp(44px,11vw,68px)}
   .school-scene-copy p{max-width:330px;font-size:13px}
   .school-scene-bottom{grid-template-columns:1fr minmax(54px,100px);gap:14px;padding:17px 22px}
@@ -40,8 +40,9 @@
 }
 @media(prefers-reduced-motion:reduce){.school-journey{height:100svh}.school-scene-image{will-change:auto}.school-scene-copy{transform:translateY(-50%)}}
 
-@media(max-width:680px) and (prefers-reduced-motion:reduce){
+@media(max-width:680px) and (prefers-reduced-motion:reduce),(hover:none) and (pointer:coarse) and (prefers-reduced-motion:reduce){
   .school-journey{height:auto}
-  .school-scene-image{height:90svh;min-height:480px}
+  .school-scene-image{height:max(90svh,480px);min-height:0}
   .school-scene-image img{transform:none;transition:none}
+  .school-copy-inside{top:calc(max(90svh,480px) + 43svh)}
 }
