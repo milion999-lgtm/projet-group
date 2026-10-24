@@ -12,6 +12,8 @@ import './premium-visual.css'
 import './assessment.css'
 import './auth-and-brands.css'
 import './mdn-path.css'
+import './school-journey.css'
+import './experience-redesign.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode><BrowserRouter basename={import.meta.env.BASE_URL}><App /></BrowserRouter></React.StrictMode>,

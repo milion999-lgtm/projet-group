@@ -1,11 +1,11 @@
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpenCheck, Code2, Database, FileText, Palette, Play, Server, ShieldCheck } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, BookOpenCheck, Code2, Database, FileText, Palette, Play, Server, ShieldCheck } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import GlobeExperience from '../components/GlobeExperience'
 import { CourseCard, ProgramLogo, SectionHeading } from '../components/UI'
 import { courses } from '../data'
 import { useApp } from '../App'
+import SchoolJourney from '../components/SchoolJourney'
 
 const categories = [
   { title: 'Développement web', icon: Code2 },
@@ -21,13 +21,7 @@ export default function Landing() {
   const reducedMotion = useReducedMotion()
   const recommendedCourses = assessment ? assessment.recommendedCourseIds.map(id => courses.find(course => course.id === id)).filter((course): course is (typeof courses)[number] => Boolean(course)) : []
   return <>
-    <section className="hero"><div className="hero-grid"/><div className="hero-inner page-width">
-      <div className="hero-copy"><span className="hero-kicker"><BookOpenCheck size={14}/> Cours gratuits, vidéos originales et documentation</span><motion.h1 initial={reducedMotion?false:{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:reducedMotion?0:.55,ease:'easeOut'}}>Apprenez pour<br/>de vrai. <span>Construisez<br className="desktop-break"/> vos compétences.</span></motion.h1><p>Suivez des formations complètes en français, travaillez avec des exemples concrets et ouvrez les ressources officielles quand vous voulez approfondir.</p>
-        <div className="hero-actions"><Link to="/courses" className="button">Découvrir les cours <ArrowRight size={16}/></Link><Link to={`/course/${courses[0].id}`} className="button button-outline"><Play size={14} fill="currentColor"/> Commencer gratuitement</Link></div>
-        <div className="hero-proof"><span><strong>{courses.length} formations</strong> sélectionnées et documentées</span></div>
-      </div>
-      <div className="hero-art"><div className="hero-halo"/><div className="hero-coordinate coordinate-a">HTML · CSS · PYTHON</div><div className="hero-coordinate coordinate-b">APPRENDRE · PRATIQUER · CRÉER</div><GlobeExperience/><Link to="/sources" className="orbit-card orbit-card-top"><span className="orbit-card-icon"><FileText size={16}/></span><span><strong>Sources identifiées</strong><small>Vidéos et docs d’origine</small></span><ArrowUpRight size={14}/></Link><Link to="/dashboard" className="orbit-card orbit-card-bottom"><span className="pulse-ring"><span/></span><span><strong>À votre rythme</strong><small>Progression enregistrée ici</small></span><ArrowUpRight size={14}/></Link></div>
-    </div><a className="scroll-cue" href="#cours"><ArrowDown size={14}/> Parcourir les formations</a></section>
+    <SchoolJourney />
 
     {assessment && recommendedCourses.length > 0 && <section className="assessment-recommendations section-pad"><div className="page-width"><div className="section-row"><SectionHeading eyebrow={`Votre diagnostic · ${assessment.score}/${assessment.total}`} title="Un parcours adapté à vos réponses" copy="Nous avons retenu les compétences à renforcer et choisi des formations correspondantes."/><Link to="/dashboard" className="text-link view-all">Mon espace <ArrowUpRight size={15}/></Link></div><div className="course-grid">{recommendedCourses.map((course,index)=><motion.div className="course-motion-wrap" key={course.id} initial={reducedMotion?false:{opacity:0,y:20}} whileInView={reducedMotion?undefined:{opacity:1,y:0}} viewport={{once:true,amount:.15}} transition={{duration:reducedMotion?0:.4,delay:reducedMotion?0:index*.06}}><CourseCard course={course} saved={saved.includes(course.id)} onSave={user ? toggleSaved : null}/></motion.div>)}</div></div></section>}
 
