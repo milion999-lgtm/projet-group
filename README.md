@@ -1,6 +1,6 @@
 # EduVerse — parcours d’apprentissage
 
-Plateforme React/Vite en français avec 30 formations, des vidéos publiques, des logos de technologies, un programme de leçons, des ressources de référence, un assistant IA par cours, une page dédiée à l’assistant, des quiz et un suivi local. Les trois premiers parcours sont gratuits; les autres sont des accès premium de démonstration. Les prix et les achats sont simulés dans le navigateur : aucun paiement réel n’est activé.
+Plateforme React/Vite en français avec 30 formations, des vidéos publiques, des logos de technologies, un programme de leçons, des ressources de référence, un assistant IA par cours, une page dédiée à l’assistant, des quiz et un suivi local. Six formations sont gratuites; les 24 autres sont des accès premium de démonstration. Les prix et les achats sont simulés dans le navigateur : aucun paiement réel n’est activé.
 
 ## Démarrer
 

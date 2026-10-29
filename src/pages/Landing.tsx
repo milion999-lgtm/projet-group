@@ -13,6 +13,7 @@ const categories = [
   { title: 'Design UI/UX', icon: Palette },
   { title: 'Données', icon: Database },
   { title: 'Systèmes', icon: Server },
+  { title: 'Outils développeur', icon: FileText },
 ]
 
 export default function Landing() {
@@ -38,7 +39,7 @@ export default function Landing() {
     <section className="testimonial-section section-pad"><div className="page-width"><SectionHeading eyebrow="À savoir avant de commencer" title="Un accès simple et transparent"/><div className="testimonial-grid"><article className="testimonial-card"><div className="quote-mark"><Play size={20}/></div><h3>Les vidéos</h3><p>Elles sont intégrées depuis YouTube. Le lecteur affiche la vidéo de son auteur et peut dépendre de la disponibilité de l’intégration.</p></article><article className="testimonial-card testimonial-featured"><div className="quote-mark"><FileText size={20}/></div><h3>Les ressources</h3><p>Les guides et exercices restent hébergés chez MDN, Python et Figma. Vous pouvez les ouvrir pour approfondir chaque notion.</p></article><article className="testimonial-card"><div className="quote-mark"><BookOpenCheck size={20}/></div><h3>Votre progression</h3><p>La version actuelle conserve la progression dans le navigateur. Elle n’est pas encore synchronisée entre plusieurs appareils.</p></article></div></div></section>
 
     <section className="faq-section section-pad"><div className="page-width faq-layout"><SectionHeading eyebrow="Questions fréquentes" title="Avant de vous lancer" copy="Ce que la plateforme fournit aujourd’hui."/><div className="faq-list">{[
-      ['Les cours sont-ils payants ?', 'Six parcours sont gratuits. Dix autres affichent un tarif fictif en MAD pour tester le parcours Premium; aucun paiement réel n’est activé. Les ressources vidéo originales restent publiées gratuitement par leurs auteurs.'],
+      ['Les cours sont-ils payants ?', 'Six formations sont gratuites. Les 24 autres affichent un tarif fictif en MAD pour tester le parcours Premium; aucun paiement réel n’est activé. Les ressources vidéo originales restent publiées gratuitement par leurs auteurs.'],
       ['Les vidéos sont-elles créées par EduVerse ?', 'Non. Elles restent la propriété de leurs auteurs et sont intégrées depuis leurs pages YouTube publiques. Le nom de la source et la langue de la vidéo apparaissent sur chaque formation; les sous-titres dépendent de YouTube.'],
       ['Faut-il un compte pour utiliser les formations ?', 'Non pour parcourir EduVerse et consulter le catalogue. Un compte est demandé pour lancer une leçon, suivre votre progression, enregistrer des favoris, utiliser l’assistant IA ou accéder à votre espace personnel.'],
       ['Comment tester un cours Premium ?', 'Après avoir créé un compte, choisissez « Simuler l’achat » sur une fiche Premium pour tester le parcours : aucun paiement réel n’est effectué.'],

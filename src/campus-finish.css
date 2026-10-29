@@ -99,9 +99,8 @@ body { background: #18231d; color: var(--text); }
   box-shadow: 0 14px 34px rgba(6,13,8,.14), inset 0 1px rgba(244,240,220,.04);
 }
 .category-card { min-height: 168px; border-radius: 4px; }
-.category-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.category-card:nth-child(1), .category-card:nth-child(2) { grid-column: span 2; }
-.category-card:nth-child(3), .category-card:nth-child(4), .category-card:nth-child(5) { grid-column: span 2; }
+.category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.category-card:nth-child(n) { grid-column: span 1; }
 .category-card:hover { border-color: rgba(207,214,183,.48); transform: translateY(-4px); }
 .category-title { font-size: 15px; }
 .category-icon { border-radius: 4px; color: #d5c184; background: rgba(213,193,132,.1); }
